@@ -1,30 +1,35 @@
 <template>
   <div>
-    <div class="header container mx-auto border rounded border-slate-100">
-      <div class="grid grid-cols-3">
-        <div class="add-ticker border rounded border-slate-200">
-          <p class="add-ticker__label">Тикер</p>
-          <input
-            class="add-ticker__input"
-            v-model="ticker.FROMSYMBOL"
-            type="text"
-            placeholder="Например DOGE"
-          />
-        </div>
-      </div>
+    <div class="container mx-auto">
+      <div class="md:rounded p-4 md:m-4 bg-white">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="border rounded-md border-slate-300 pl-4 py-2">
+            <p class="text-xs">Тикер</p>
 
-      <button
-        class="add-ticker-button pagination-button border rounded border-slate-300"
-        @click="addTicker()"
-      >
-        Добавить
-      </button>
+            <input
+              class="bg-transparent w-full outline-none"
+              v-model="ticker.FROMSYMBOL"
+              type="text"
+              placeholder="Например DOGE"
+            />
+          </div>
+        </div>
+
+        <button
+          class="rounded-md mt-4 px-7 py-3 font-normal bg-indigo-900 text-white"
+          @click="addTicker()"
+        >
+          Добавить
+        </button>
+      </div>
     </div>
 
     <div class="container mx-auto">
-      <div class="grid grid-cols-3">
-        <div class="ticker-filter border rounded border-slate-200">
-          <button @click="filterTickers">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div
+          class="flex flex-row border rounded-md border-slate-300 ml-4 mr-4 md:mr-0 mt-4 px-3 bg-white"
+        >
+          <button @click="filterTickers" class="mr-1">
             <svg
               width="18"
               height="18"
@@ -43,7 +48,7 @@
           </button>
 
           <input
-            class="ticker-filter__input"
+            class="bg-transparent ml-2 py-2 w-full font-light text-md outline-none"
             v-model="filterKeywords.current"
             type="text"
             placeholder="Найти тикер"
@@ -51,18 +56,18 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 m-4">
         <div
           @click="setActiveTicker(ticker)"
-          class="card border rounded border-slate-200"
+          class="border rounded-md border-slate-200 bg-white relative"
           v-for="(ticker, index) in paginatedTickers"
           :key="index"
         >
-          <p class="card__ticker-title">{{ ticker.FROMSYMBOL }}</p>
+          <p class="pt-3 pl-6 text-sm">{{ ticker.FROMSYMBOL }}</p>
 
-          <p class="card__ticker-price">{{ ticker.PRICE ? ticker.PRICE : "" }}$</p>
+          <p class="pb-3 pl-6 pt-0 text-3xl">{{ ticker.PRICE ? ticker.PRICE : "" }}$</p>
 
-          <button @click="deleteTicker(ticker)" class="card-delete">
+          <button @click="deleteTicker(ticker)" class="absolute top-3 right-4">
             <svg
               width="16"
               height="16"
@@ -87,23 +92,26 @@
       </div>
     </div>
 
-    <div v-if="filteredTickers.length > rowsLimit" class="footer-pagination">
-      <div class="container mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2">
-          <div class="invisible md:visible">
-            <p>Показано {{ paginatedTickers.length }} результатов из {{ liveTickers.length }}</p>
-          </div>
+    <div v-if="filteredTickers.length > rowsLimit" class="fixed bottom-0 left-0 w-full">
+      <div class="container mx-auto bg-white md:bg-transparent border-t md:border-none">
+        <div
+          class="grid items-center justify-between grid-cols-1 md:grid-cols-2 md:border-t py-4 mx-4"
+        >
+          <p class="hidden md:inline text-md">
+            Показано {{ paginatedTickers.length }} результатов из {{ liveTickers.length }}
+          </p>
 
-          <div>
+          <div class="flex justify-between md:justify-end">
             <button
               @click="changePage('prev')"
-              class="pagination-button border rounded border-slate-300"
+              class="border rounded-md border-slate-300 py-2 px-5 bg-white"
             >
               Назад
             </button>
+
             <button
               @click="changePage('next')"
-              class="pagination-button border rounded border-slate-300"
+              class="border rounded-md border-slate-300 py-2 px-5 bg-white ml-2"
             >
               Вперед
             </button>
@@ -119,7 +127,7 @@ import idb from "@/api/idb";
 import Chart from "chart.js/auto";
 
 export default {
-  name: "HomeView",
+  name: "DashboardView",
   data: () => ({
     connection: null,
     apiKey: "",
@@ -328,80 +336,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.header {
-  padding: 15px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  background-color: #fff;
-}
-.add-ticker {
-  padding: 5px 10px;
-}
-.add-ticker__label {
-  font-size: 12px;
-}
-.add-ticker__input {
-  width: 100%;
-  background-color: unset;
-}
-.add-ticker__input:focus,
-.add-ticker__input:focus-visible {
-  outline: none;
-  background-color: unset;
-}
-
-.ticker-filter {
-  display: flex;
-  padding: 5px 10px;
-  background-color: #fff;
-}
-.ticker-filter__input {
-  margin-left: 5px;
-  width: auto;
-}
-.ticker-filter__input:focus {
-  outline: none;
-}
-
-.card {
-  position: relative;
-  padding: 10px 15px;
-  margin: 15px 15px 0 15px;
-
-  background-color: #fff;
-}
-.card__ticker-title {
-  font-size: 12px;
-}
-.card__ticker-price {
-  font-size: 24px;
-}
-.card-delete {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-}
-
-.footer-pagination {
-  margin-top: 30px;
-  border-top: 2px;
-  border-style: solid;
-  border-color: #e5e7eb;
-
-  bottom: 15px;
-}
-.pagination-button {
-  padding: 5px 10px;
-  background-color: #fff;
-}
-.add-ticker-button {
-  font-weight: 300;
-  font-size: 12px;
-  margin-top: 5px;
-  color: #fff;
-  padding: 10px 20px;
-  background-color: #471f7a;
-}
-</style>
